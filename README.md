@@ -1,6 +1,7 @@
 # ProtobufFormatter
 A Protobuf WebAPI formatter
 
+See [Protocol Buffer Basics: C#](https://developers.google.com/protocol-buffers/docs/csharptutorial) to get started.
 
 #Server 
 ```
