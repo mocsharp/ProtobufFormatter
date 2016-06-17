@@ -20,7 +20,8 @@ namespace ProtobufLib
         public override void WriteToStream(Type type, object value, Stream writeStream, HttpContent content)
         {
             var val = value as IMessage;
-            val.WriteTo(writeStream);
+            if(val != null)
+                val.WriteTo(writeStream);
         }
 
         public override object ReadFromStream(Type type, Stream readStream, HttpContent content,
