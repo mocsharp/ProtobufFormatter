@@ -12,6 +12,7 @@ app.UseWebApi(config);
 ```
 
 #Client
+##Get
 ```
 HttpClient client = new HttpClient();
 client.DefaultRequestHeaders.Accept.Clear(); //optional
@@ -27,5 +28,26 @@ private static List<MediaTypeFormatter> GetFormatter()
   var formatters = new List<MediaTypeFormatter>();
   formatters.Add(new HolxProtoBufFormatter());
   return formatters;
+}
+```
+##Post
+```csharp
+Person newPerson = new Person()
+{
+  Email = "my@email.com",
+  Id = 50,
+  Name = "Joe"
+};
+
+using (var ms = new MemoryStream())
+{
+  using(var gs = new CodedOutputStream(ms))
+  {
+    newPerson.WriteTo(gs);
+  }
+  var content = new ByteArrayContent(ms.ToArray());
+  content.Headers.ContentType = new MediaTypeHeaderValue("application/x-protobuf");
+  var res = await client.PostAsync("http://localhost:12345/api/home/some-post-api", content);
+  res.EnsureSuccessStatusCode();
 }
 ```
