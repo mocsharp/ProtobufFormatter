@@ -4,7 +4,7 @@ A Protobuf WebAPI formatter
 See [Protocol Buffer Basics: C#](https://developers.google.com/protocol-buffers/docs/csharptutorial) to get started.
 
 #Server 
-```
+```csharp
 HttpConfiguration config = new HttpConfiguration();
 config.Formatters.Insert(0, new ProtoBufFormatter());
 ...
@@ -13,7 +13,7 @@ app.UseWebApi(config);
 
 #Client
 ##Get
-```
+```csharp
 HttpClient client = new HttpClient();
 client.DefaultRequestHeaders.Accept.Clear(); //optional
 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-protobuf"));
