@@ -7,7 +7,7 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using Google.Protobuf;
 
-namespace ProtobufLib
+namespace Mocsharp.WebApi.Formatters.Protobuf
 {
     public class ProtoBufFormatter : BufferedMediaTypeFormatter
     {
@@ -74,8 +74,16 @@ namespace ProtobufLib
 
         private bool CanReadWriteType(Type type)
         {
-            var interfaceType = typeof(IMessage<>).MakeGenericType(type);
-            return type.GetInterfaces().Contains(interfaceType);
+            try
+            {
+                var interfaceType = typeof(IMessage<>).MakeGenericType(type);
+                return type.GetInterfaces().Contains(interfaceType);
+            }
+            catch (Exception)
+            {
+                //log if needed                
+                return false;
+            }
         }
     }
 }
