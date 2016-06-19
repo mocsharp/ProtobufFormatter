@@ -12,8 +12,8 @@ namespace Mocsharp.WebApi.Formatters.Protobuf.Test
             // Configure Web API for self-host. 
             HttpConfiguration config = new HttpConfiguration();
             config.MapHttpAttributeRoutes();
-           
 
+            config.Formatters.Clear();
             config.Formatters.Add(new ProtoBufFormatter());
 
             config.EnableSystemDiagnosticsTracing();

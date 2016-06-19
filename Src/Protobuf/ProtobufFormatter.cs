@@ -20,7 +20,7 @@ namespace Mocsharp.WebApi.Formatters.Protobuf
         public override void WriteToStream(Type type, object value, Stream writeStream, HttpContent content)
         {
             var val = value as IMessage;
-            if(val != null)
+            if (val != null)
                 val.WriteTo(writeStream);
         }
 
@@ -35,10 +35,10 @@ namespace Mocsharp.WebApi.Formatters.Protobuf
                     BindingFlags.Instance | BindingFlags.Public,
                     null,
                     CallingConventions.Any,
-                    new[] {typeof(Stream)},
+                    new[] { typeof(Stream) },
                     null);
 
-                return parserMethod.Invoke(instance, new[] {readStream});
+                return parserMethod.Invoke(instance, new[] { readStream });
             }
             catch (Exception ex)
             {
@@ -74,16 +74,7 @@ namespace Mocsharp.WebApi.Formatters.Protobuf
 
         private bool CanReadWriteType(Type type)
         {
-            try
-            {
-                var interfaceType = typeof(IMessage<>).MakeGenericType(type);
-                return type.GetInterfaces().Contains(interfaceType);
-            }
-            catch (Exception)
-            {
-                //log if needed                
-                return false;
-            }
+            return typeof(IMessage).IsAssignableFrom(type);
         }
     }
 }

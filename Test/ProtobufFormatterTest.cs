@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Mocsharp.WebApi.Formatters.Protobuf.Test
 {
-    public class ProtobufFormatterTest:IClassFixture<ServerFixture>
+    public class ProtobufFormatterTest : IClassFixture<ServerFixture>
     {
         ServerFixture _fixture;
         HttpClient _client;
@@ -36,7 +36,7 @@ namespace Mocsharp.WebApi.Formatters.Protobuf.Test
             req.EnsureSuccessStatusCode();
             var person = await req.Content.ReadAsAsync<Person>(GetFormatter());
 
-            var expectedPerson = PhoneBookController.Database.ElementAt(id-1);
+            var expectedPerson = PhoneBookController.Database.ElementAt(id - 1);
             Assert.Equal(expectedPerson.Id, person.Id);
             Assert.Equal(expectedPerson.Name, person.Name);
             Assert.Equal(expectedPerson.Email, person.Email);
@@ -49,23 +49,7 @@ namespace Mocsharp.WebApi.Formatters.Protobuf.Test
         [Fact]
         public async Task UploadTest()
         {
-            Person newPerson = new Person()
-            {
-                Email = "stephen@email.com",
-                Name = "Stephen"
-            };
-
-            newPerson.Phones.Add(new Person.Types.PhoneNumber()
-            {
-                Number = "777-777-7777",
-                Type = Person.Types.PhoneType.Mobile
-            });
-
-            newPerson.Phones.Add(new Person.Types.PhoneNumber()
-            {
-                Number = "888-888-8888",
-                Type = Person.Types.PhoneType.Home
-            });
+            Person newPerson = New();
 
             using (var ms = new MemoryStream())
             {
@@ -91,11 +75,64 @@ namespace Mocsharp.WebApi.Formatters.Protobuf.Test
             Assert.Equal(newPerson.Phones.ElementAt(1).Type, added.Phones.ElementAt(1).Type);
 
         }
+
+
+
+        [Fact]
+        public async Task UploadTest_UnsupportedDataType()
+        {
+            var foo = new Foo { Data = "Hello World!" };
+            var res = await _client.PostAsJsonAsync<Foo>($"http://localhost:{_fixture.Port}/api/phone/update", foo);
+            Exception ex = Record.Exception(() => res.EnsureSuccessStatusCode());
+
+            Assert.NotNull(ex);
+        }
+
+        [Fact]
+        public async Task UploadTest_UnsupportedMediaType()
+        {
+
+            Person newPerson = New();
+            var res = await _client.PostAsJsonAsync<Person>($"http://localhost:{_fixture.Port}/api/phone/update", newPerson);
+            Exception ex = Record.Exception(() => res.EnsureSuccessStatusCode());
+
+            Assert.NotNull(ex);
+
+        }
+
+        private Person New()
+        {
+            Person newPerson = new Person()
+            {
+                Email = "stephen@email.com",
+                Name = "Stephen"
+            };
+
+            newPerson.Phones.Add(new Person.Types.PhoneNumber()
+            {
+                Number = "777-777-7777",
+                Type = Person.Types.PhoneType.Mobile
+            });
+
+            newPerson.Phones.Add(new Person.Types.PhoneNumber()
+            {
+                Number = "888-888-8888",
+                Type = Person.Types.PhoneType.Home
+            });
+
+            return newPerson;
+        }
+
         private List<MediaTypeFormatter> GetFormatter()
         {
             var formatters = new List<MediaTypeFormatter>();
             formatters.Add(new ProtoBufFormatter());
             return formatters;
         }
+    }
+
+    public class Foo
+    {
+        public string Data { get; set; }
     }
 }
